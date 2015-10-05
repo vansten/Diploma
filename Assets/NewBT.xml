@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BehaviorTree>
+  <BehaviorTree>
+    <TickDelay>0</TickDelay>
+    <Child>NULL</Child>
+  </BehaviorTree>
+</BehaviorTree>
