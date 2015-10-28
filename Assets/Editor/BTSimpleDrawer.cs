@@ -18,12 +18,25 @@ public class BTSimpleDrawer : IBTElementDrawer
 
     public void DrawBehaviorTree(BehaviorTree behaviorTree)
     {
+        if (behaviorTree == null || BehaviorTreeEditor.BTEditorWindow == null)
+        {
+            return;
+        }
+
         _behaviorTree = behaviorTree;
 
         _drawI = 0;
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField("Tick Delay (in seconds): ", BehaviorTreeEditorSettings.labelWidth);
-        _behaviorTree.TickDelay = Mathf.Clamp(EditorGUILayout.FloatField(_behaviorTree.TickDelay, BehaviorTreeEditorSettings.floatFieldsWidth), 0.0f, float.MaxValue);
+        float newTickDelay = Mathf.Clamp(EditorGUILayout.FloatField(_behaviorTree.TickDelay, BehaviorTreeEditorSettings.floatFieldsWidth), 0.0f, float.MaxValue);
+        if(newTickDelay != _behaviorTree.TickDelay)
+        {
+            _behaviorTree.TickDelay = newTickDelay;
+            if(BehaviorTreeEditor.BTEditorWindow.Autosave)
+            {
+                BehaviorTreeEditor.BTEditorWindow.Save();
+            }
+        }
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.Space();
@@ -51,6 +64,10 @@ public class BTSimpleDrawer : IBTElementDrawer
                     break;
                 default:
                     break;
+            }
+            if(BehaviorTreeEditor.BTEditorWindow.Autosave)
+            {
+                BehaviorTreeEditor.BTEditorWindow.Save();
             }
         }
         if (_behaviorTree.Child != null)
@@ -247,14 +264,25 @@ public class BTSimpleDrawer : IBTElementDrawer
                 default:
                     break;
             }
+            if (BehaviorTreeEditor.BTEditorWindow.Autosave)
+            {
+                BehaviorTreeEditor.BTEditorWindow.Save();
+            }
         }
     }
 
     private void DrawRemoveChildOption(INode node)
     {
-        if (GUILayout.Button("-"))
+        if (node != null)
         {
-            node.Remove();
+            if (GUILayout.Button("-", BehaviorTreeEditorSettings.ButtonWidth))
+            {
+                node.Remove();
+                if (BehaviorTreeEditor.BTEditorWindow.Autosave)
+                {
+                    BehaviorTreeEditor.BTEditorWindow.Save();
+                }
+            }
         }
     }
 }

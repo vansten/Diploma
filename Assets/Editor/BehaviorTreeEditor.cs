@@ -3,21 +3,11 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using System.Reflection;
-
-public class BehaviorTreeEditorSettings
-{
-    public static GUILayoutOption buttonWidth = GUILayout.Width(150);
-    public static GUILayoutOption decoratorTypePopupWidth = GUILayout.Width(200);
-    public static GUILayoutOption methodChosePopupWidth = GUILayout.Width(300);
-    public static GUILayoutOption labelWidth = GUILayout.Width(150);
-    public static GUILayoutOption editableFieldsWidth = GUILayout.Width(400);
-    public static GUILayoutOption floatFieldsWidth = GUILayout.Width(150);
-}
+using System.Collections;
 
 public class BehaviorTreeEditor : EditorWindow
 {
-    
-    private static BehaviorTreeEditor _editorWindow;
+    public static BehaviorTreeEditor BTEditorWindow;
     private static IBTElementDrawer _drawer;
 
     private List<string> _drawers = new List<string>();
@@ -28,16 +18,23 @@ public class BehaviorTreeEditor : EditorWindow
     private BehaviorTree _behaviorTree = null;
     private bool _isXMLFile = false;
     private string _behaviorTreeName;
+    private bool _autosave = false;
 
     private List<string> _allMethods = new List<string>();
     List<string> _decoratorTypes = new List<string>();
+
+    public bool Autosave
+    {
+        get { return _autosave; }
+    }
 
     [MenuItem("Window/BT Editor")]
     [MenuItem("Behavior Tree/Open Editor")]
     public static void Open()
     {
-        _editorWindow = GetWindow<BehaviorTreeEditor>();
-        _editorWindow.Init();
+        BTEditorWindow = GetWindow<BehaviorTreeEditor>();
+        BTEditorWindow.Init();
+        BehaviorTreeEditorSettings.Init();
     }
 
     void Init()
@@ -95,10 +92,10 @@ public class BehaviorTreeEditor : EditorWindow
         }
 
         //General settings
-        _editorWindow.titleContent.text = "BT Editor";
+        BTEditorWindow.titleContent.text = "BT Editor";
         Rect windowRect = new Rect(50.0f, 50.0f, 1000.0f, 800.0f);
-        _editorWindow.position = windowRect;
-        _editorWindow._behaviorTree = null;
+        BTEditorWindow.position = windowRect;
+        BTEditorWindow._behaviorTree = null;
 
         //Fill decorator type list
         Array dt = Enum.GetValues(typeof(DecoratorType));
@@ -115,6 +112,7 @@ public class BehaviorTreeEditor : EditorWindow
     {
         DrawSelectDrawer();
         _selectedAsset = (TextAsset)EditorGUILayout.ObjectField("Behavior Tree asset: ", _selectedAsset, typeof(TextAsset), false, BehaviorTreeEditorSettings.editableFieldsWidth);
+        _autosave = EditorGUILayout.Toggle("Autosave: ", _autosave);
         if(_selectedAsset != null)
         {
             EditorGUILayout.BeginHorizontal();
@@ -130,10 +128,9 @@ public class BehaviorTreeEditor : EditorWindow
             {
                 if(_behaviorTree != null)
                 {
-                    if (GUILayout.Button("Save", BehaviorTreeEditorSettings.buttonWidth))
+                    if (GUILayout.Button("Save", BehaviorTreeEditorSettings.ButtonWidth))
                     {
-                        BTSerializer.Serialize(_behaviorTree, AssetDatabase.GetAssetPath(_selectedAsset.GetInstanceID()));
-                        AssetDatabase.Refresh();
+                        Save();
                     }
 
                     if(_drawer != null)
@@ -157,7 +154,7 @@ public class BehaviorTreeEditor : EditorWindow
             _behaviorTreeName = EditorGUILayout.TextField("Behavior Tree Name: ", _behaviorTreeName, BehaviorTreeEditorSettings.editableFieldsWidth);
             bool disabled = _behaviorTreeName == null || _behaviorTreeName.Length == 0;
             EditorGUI.BeginDisabledGroup(disabled);
-            if (GUILayout.Button("Create Behavior Tree", BehaviorTreeEditorSettings.buttonWidth))
+            if (GUILayout.Button("Create Behavior Tree", BehaviorTreeEditorSettings.ButtonWidth))
             {
                 _behaviorTree = new BehaviorTree();
                 string path = @"Assets/" + _behaviorTreeName + ".xml";
@@ -170,6 +167,12 @@ public class BehaviorTreeEditor : EditorWindow
 
         }
         _prevSelectedAsset = _selectedAsset;
+    }
+
+    public void Save()
+    {
+        BTSerializer.Serialize(_behaviorTree, AssetDatabase.GetAssetPath(_selectedAsset.GetInstanceID()));
+        AssetDatabase.Refresh();
     }
 
     private void FileSelectedChanged()

@@ -30,6 +30,7 @@ public interface INode : IXmlSerializable
     void SetParent(INode parent);
     void Remove();
     void MakeRoot(BehaviorTree bt);
+    bool IsRoot();
     TaskStatus Tick(out INode nodeRunning, GameObject owner);
 }
 
@@ -158,6 +159,11 @@ public class Selector : INode
         _bt = bt;
     }
 
+    public bool IsRoot()
+    {
+        return _bt != null;
+    }
+
     public XmlSchema GetSchema()
     {
         return null;
@@ -280,6 +286,11 @@ public class Sequence : INode
     public void MakeRoot(BehaviorTree bt)
     {
         _bt = bt;
+    }
+
+    public bool IsRoot()
+    {
+        return _bt != null;
     }
 
     public XmlSchema GetSchema()
@@ -414,6 +425,11 @@ public class Task : INode
         _bt = bt;
     }
 
+    public bool IsRoot()
+    {
+        return _bt != null;
+    }
+
     public void SetMethod(Type t, string methodName)
     {
         _methodName = methodName;
@@ -542,6 +558,11 @@ public class Decorator : INode
     public void SetParent(INode parent)
     {
         _parent = parent;
+    }
+
+    public bool IsRoot()
+    {
+        return _bt != null;
     }
 
     public void Remove()
