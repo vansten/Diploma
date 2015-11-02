@@ -23,7 +23,7 @@ public enum DecoratorType
 
 public interface INode : IXmlSerializable
 {
-    void Initialize();
+    void Initialize(Blackboard blackboard);
     void AddChild(INode child);
     INode GetParent();
     void RemoveChild(INode child = null);
@@ -85,7 +85,7 @@ public class Selector : INode
         set { _children = value; }
     }
 
-    public void Initialize()
+    public void Initialize(Blackboard blackboard)
     {
         if(_children.Count == 0)
         {
@@ -95,7 +95,7 @@ public class Selector : INode
         {
             foreach(INode child in _children)
             {
-                child.Initialize();
+                child.Initialize(blackboard);
             }
         }
     }
@@ -208,26 +208,26 @@ public class Sequence : INode
     private BehaviorTree _bt;
     private INode _parent;
     private List<INode> _children = new List<INode>();
-        public List<INode> Children
-        {
-            get { return _children; }
-            set { _children = value; }
-        }
+    public List<INode> Children
+    {
+        get { return _children; }
+        set { _children = value; }
+    }
 
-        public void Initialize()
+    public void Initialize(Blackboard blackboard)
+    {
+        if (_children == null || _children.Count == 0)
         {
-            if (_children == null || _children.Count == 0)
+            Helper.LogAndBreak("Sequence has no children");
+        }
+        else
+        {
+            foreach (INode child in _children)
             {
-                Helper.LogAndBreak("Sequence has no children");
-            }
-            else
-            {
-                foreach (INode child in _children)
-                {
-                    child.Initialize();
-                }
+                child.Initialize(blackboard);
             }
         }
+    }
 
     public TaskStatus Tick(out INode nodeRunning, GameObject owner)
     {
@@ -335,8 +335,9 @@ public class Sequence : INode
 public class Task : INode
 {
     private BehaviorTree _bt;
+    private Blackboard _blackboard;
     private INode _parent;
-    public delegate TaskStatus TickDelegate(GameObject owner);
+    public delegate TaskStatus TickDelegate(GameObject owner, Blackboard blackboard);
     public event TickDelegate OnTaskTick;
 
     private Type _methodType;
@@ -362,8 +363,9 @@ public class Task : INode
         }
     }
 
-    public void Initialize()
+    public void Initialize(Blackboard blackboard)
     {
+        _blackboard = blackboard;
         if(OnTaskTick == null)
         {
             Helper.LogAndBreak("Task's OnTaskTick event is null");
@@ -372,7 +374,7 @@ public class Task : INode
 
     public TaskStatus Tick(out INode nodeRunning, GameObject owner)
     {
-        TaskStatus ts = OnTaskTick(owner);
+        TaskStatus ts = OnTaskTick(owner, _blackboard);
         if(ts == TaskStatus.RUNNING)
         {
             nodeRunning = this;
@@ -484,6 +486,7 @@ public class Decorator : INode
     private BehaviorTree _bt;
     private INode _parent;
     private INode _child;
+
     public INode Child
     {
         get { return _child; }
@@ -496,7 +499,7 @@ public class Decorator : INode
         set;
     }
         
-    public void Initialize()
+    public void Initialize(Blackboard blackboard)
     {
         if(_child == null)
         {
@@ -504,7 +507,7 @@ public class Decorator : INode
         }
         else
         {
-            _child.Initialize();
+            _child.Initialize(blackboard);
         }
     }
 
@@ -661,10 +664,12 @@ public class BehaviorTree : IXmlSerializable
 
     private float _timer = 0.0f;
     private GameObject _owner;
+    private Blackboard _blackboard;
 
-    public void Initialize(GameObject owner)
+    public void Initialize(GameObject owner, Blackboard blackboard)
     {
         _timer = 0.0f;
+        _blackboard = blackboard;
         if (Child == null)
         {
             Helper.LogAndBreak("Behavior Tree has no child");
@@ -678,7 +683,7 @@ public class BehaviorTree : IXmlSerializable
             else
             {
                 _owner = owner;
-                Child.Initialize();
+                Child.Initialize(_blackboard);
             }
         }
     }

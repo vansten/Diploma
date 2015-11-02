@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using System.Reflection;
 
-public class BTSimpleDrawer : IBTElementDrawer
+/*public class BTSimpleDrawer : IBTElementDrawer
 {
     const string emptySpace = "     ";
     const string stringDrawerHelper = "|---";
@@ -285,4 +285,4 @@ public class BTSimpleDrawer : IBTElementDrawer
             }
         }
     }
-}
+}*/

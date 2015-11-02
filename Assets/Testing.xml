@@ -2,6 +2,6 @@
 <BehaviorTree>
   <BehaviorTree>
     <TickDelay>0.2</TickDelay>
-    <Child>Sequence<Sequence><Children><Type>Selector</Type><Selector><Children><Type>Task</Type><Task><MethodType>CubeTest</MethodType><MethodName>Stay</MethodName></Task></Children></Selector><Type>Decorator</Type><Decorator><Child>Task<Task><MethodType>CubeTest</MethodType><MethodName>Stay</MethodName></Task></Child><DecoratorType>ALWAYS_FAIL</DecoratorType></Decorator></Children></Sequence></Child>
+    <Child>Sequence<Sequence><Children><Type>Decorator</Type><Decorator><Child>Task<Task><MethodType>CubeTest</MethodType><MethodName>Stay</MethodName></Task></Child><DecoratorType>ALWAYS_FAIL</DecoratorType></Decorator></Children></Sequence></Child>
   </BehaviorTree>
 </BehaviorTree>

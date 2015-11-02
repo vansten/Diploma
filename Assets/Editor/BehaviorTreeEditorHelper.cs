@@ -3,6 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
+public enum EditorState
+{
+    DrawSettings,
+    DrawBehaviorTree
+}
+
 public class DrawerNodeClass
 {
     public INode Node;
@@ -15,10 +21,10 @@ public class DrawerNodeClass
     public void CalculateRect()
     {
         Position = new Rect(
-                            Width * (BehaviorTreeEditorSettings.ElementWidth + BehaviorTreeEditorSettings.HorizontalSpaceBetweenElements) + 110,
-                            Depth * (BehaviorTreeEditorSettings.ElementHeight + BehaviorTreeEditorSettings.VerticalSpaceBetweenElements) + 200,
-                            BehaviorTreeEditorSettings.ElementWidth,
-                            BehaviorTreeEditorSettings.ElementHeight);
+                            Width * (BehaviorTreeEditorSettings.Instance.ElementWidth + BehaviorTreeEditorSettings.Instance.HorizontalSpaceBetweenElements) + 110,
+                            Depth * (BehaviorTreeEditorSettings.Instance.ElementHeight + BehaviorTreeEditorSettings.Instance.VerticalSpaceBetweenElements) + 200,
+                            BehaviorTreeEditorSettings.Instance.ElementWidth,
+                            BehaviorTreeEditorSettings.Instance.ElementHeight);
     }
 }
 
