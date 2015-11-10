@@ -2,6 +2,6 @@
 <BehaviorTree>
   <BehaviorTree>
     <TickDelay>0</TickDelay>
-    <Child>NULL</Child>
+    <Child>Task<Task><MethodType>CubeTest</MethodType><MethodName>Move</MethodName></Task></Child>
   </BehaviorTree>
 </BehaviorTree>

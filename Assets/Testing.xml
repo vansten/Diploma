@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<BehaviorTree>
-  <BehaviorTree>
-    <TickDelay>0.2</TickDelay>
-    <Child>Sequence<Sequence><Children><Type>Decorator</Type><Decorator><Child>Task<Task><MethodType>CubeTest</MethodType><MethodName>Stay</MethodName></Task></Child><DecoratorType>ALWAYS_FAIL</DecoratorType></Decorator></Children></Sequence></Child>
-  </BehaviorTree>
-</BehaviorTree>

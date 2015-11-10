@@ -173,7 +173,7 @@ public class BehaviorTreeEditorSettings : ISerializable
         info.AddValue(_prefix + _sideMenuHeight, SideMenuRect.height, typeof(float));
     }
 
-    private void Init()
+    public void Init()
     {
         Color[] color = new Color[1];
 

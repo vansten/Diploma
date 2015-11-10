@@ -23,6 +23,18 @@ public class Blackboard : MonoBehaviour
         }
     }
 
+    public void ChangeVariable<T>(string name, T value)
+    {
+        if(_variables.ContainsKey(name))
+        {
+            _variables[name] = value;
+        }
+        else
+        {
+            AddVariable(name, value);
+        }
+    }
+
     public bool GetVariable<T>(string name, out T value)
     {
         if (!_variables.ContainsKey(name))
@@ -35,5 +47,10 @@ public class Blackboard : MonoBehaviour
             value = (T)_variables[name];
             return true;
         }
+    }
+
+    public bool ContainsKey(string name)
+    {
+        return _variables.ContainsKey(name);
     }
 }

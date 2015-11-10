@@ -2,7 +2,7 @@
 
 public interface IBTElementDrawer
 {
-    void SetMethodsList(List<string> methodsList);
     void SetDecoratorsList(List<string> decorators);
+    void SetMethodsList(List<string> methods);
     void DrawBehaviorTree(BehaviorTree behaviorTree);
 }

@@ -10,21 +10,24 @@ public class BTWindowsDrawer : IBTElementDrawer
     private BehaviorTree _behaviorTree;
 
     private List<string> _decorators;
-    private List<string> _methods;
+    private List<string> _methods = new List<string>();
     private Queue<DrawerNodeClass> _drawingQueue = new Queue<DrawerNodeClass>();
     private string[] _addChildOptions = {"+", "Sequence", "Selector", "Decorator", "Task" };
 
     private Rect _infoRect = new Rect(20, 100, 200, 50);
+    private Rect _addRootRect = new Rect(20, 180, 250, 15);
     private Vector2 _scrollPos = Vector2.zero;
+
+    private bool _firstInit = true;
 
     public void SetDecoratorsList(List<string> decorators)
     {
         _decorators = decorators;
     }
 
-    public void SetMethodsList(List<string> methodsList)
+    public void SetMethodsList(List<string> methods)
     {
-        _methods = methodsList;
+        _methods = methods;
     }
 
     public void DrawBehaviorTree(BehaviorTree behaviorTree)
@@ -36,6 +39,7 @@ public class BTWindowsDrawer : IBTElementDrawer
 
         if(behaviorTree != _behaviorTree)
         {
+            _firstInit = true;
             BehaviorTreeEditorHelper.GenerateQueue(_drawingQueue, behaviorTree);
             BehaviorTreeEditor.BTEditorWindow.Repaint();
         }
@@ -44,14 +48,41 @@ public class BTWindowsDrawer : IBTElementDrawer
 
         if (_behaviorTree.Child == null)
         {
-            GUI.Label(new Rect(20, _infoRect.y + _infoRect.height + 10, 200, 50), "Add BT root");
-            return;
+            int i = EditorGUI.Popup(_addRootRect, "Add root: ", 0, _addChildOptions, BehaviorTreeEditorSettings.Instance.AddButtonStyle);
+            switch (i)
+            {
+                case 1:
+                    Sequence newSequence = new Sequence();
+                    behaviorTree.Child = newSequence;
+                    newSequence.MakeRoot(_behaviorTree);
+                    break;
+                case 2:
+                    Selector newSelector = new Selector();
+                    behaviorTree.Child = newSelector;
+                    newSelector.MakeRoot(_behaviorTree);
+                    break;
+                case 3:
+                    Decorator newDecorator = new Decorator();
+                    behaviorTree.Child = newDecorator;
+                    newDecorator.MakeRoot(_behaviorTree);
+                    break;
+                case 4:
+                    Task t = new Task();
+                    behaviorTree.Child = t;
+                    t.MakeRoot(_behaviorTree);
+                    break;
+                default:
+                    break;
+            }
+            
+            BehaviorTreeEditorHelper.GenerateQueue(_drawingQueue, _behaviorTree);
         }
-        
-        _scrollPos = GUI.BeginScrollView(new Rect(0, 100, BehaviorTreeEditor.BTEditorWindow.position.width - BehaviorTreeEditorSettings.Instance.SideMenuRect.width - 10, BehaviorTreeEditor.BTEditorWindow.position.height - 100),
+
+        _scrollPos = GUI.BeginScrollView(new Rect(0, 100, BehaviorTreeEditor.BTEditorWindow.position.width - BehaviorTreeEditorSettings.Instance.SideMenuRect.width - 10, BehaviorTreeEditor.BTEditorWindow.position.height - _addRootRect.height - 100),
                                         _scrollPos,
-                                        new Rect(0, 100, BehaviorTreeEditorHelper.GetWidth() * (BehaviorTreeEditorSettings.Instance.ElementWidth + BehaviorTreeEditorSettings.Instance.HorizontalSpaceBetweenElements) + 110,
+                                        new Rect(0, 100, BehaviorTreeEditorHelper.GetWidth() * (BehaviorTreeEditorSettings.Instance.ElementWidth + BehaviorTreeEditorSettings.Instance.HorizontalSpaceBetweenElements) + 110 + _infoRect.x,
                                                         BehaviorTreeEditorHelper.GetDepth(_drawingQueue) * (BehaviorTreeEditorSettings.Instance.ElementHeight + BehaviorTreeEditorSettings.Instance.VerticalSpaceBetweenElements) + 100));
+
         BehaviorTreeEditor.BTEditorWindow.BeginWindows();
 
         GUILayout.Window(-1, _infoRect, DrawInfo, "Behavior Tree Info");
@@ -93,10 +124,6 @@ public class BTWindowsDrawer : IBTElementDrawer
                 float mnog = Vector3.Distance(startPos, endPos) * 0.2f;
                 Vector3 startTangent = startPos + Vector3.right * (mnog);
                 Vector3 endTangent = endPos + Vector3.left * (mnog);
-                /*Handles.DrawLine(
-                                 new Vector3(dnc.Parent.Position.x + dnc.Parent.Position.width / 2, dnc.Parent.Position.y + dnc.Parent.Position.height),
-                                 new Vector3(dnc.Position.x + dnc.Position.width / 2, dnc.Position.y)
-                                 );*/
                 Handles.DrawBezier(startPos, endPos, startTangent, endTangent, Color.black, null, 3.0f);
                 Handles.EndGUI();
             }
@@ -129,8 +156,6 @@ public class BTWindowsDrawer : IBTElementDrawer
         {
             DrawTask((Task)dnc.Node);
         }
-        
-        GUI.DragWindow();
     }
 
     private void DrawRemoveChildOption(INode node)
@@ -156,6 +181,7 @@ public class BTWindowsDrawer : IBTElementDrawer
         {
             return;
         }
+
         switch(i)
         {
             case 1:
@@ -246,7 +272,7 @@ public class BTWindowsDrawer : IBTElementDrawer
         int selected = _methods.IndexOf(currentMethod);
         int newSelected = selected;
         newSelected = EditorGUILayout.Popup(selected, _methods.ToArray());
-        if(newSelected != selected)
+        if (newSelected != selected)
         {
             string s = _methods[newSelected];
             string type = s.Substring(0, s.LastIndexOf('.'));
@@ -268,6 +294,7 @@ public class BTWindowsDrawer : IBTElementDrawer
                 task.SetMethod(t, method);
             }
         }
+
         EditorGUILayout.EndVertical();
     }
 }

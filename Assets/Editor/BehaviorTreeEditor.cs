@@ -39,6 +39,7 @@ public class BehaviorTreeEditor : EditorWindow
         BTEditorWindow = GetWindow<BehaviorTreeEditor>();
         BTEditorWindow.Init();
         BehaviorTreeEditorSettings.Instance.Load();
+        BehaviorTreeEditorSettings.Instance.Init();
     }
 
     void Init()
@@ -46,7 +47,7 @@ public class BehaviorTreeEditor : EditorWindow
         EditorState[] stateValues = (EditorState[])Enum.GetValues(typeof(EditorState));
         int currentState = PlayerPrefs.GetInt("BTEditorState", 0);
         _state = stateValues[currentState];
-        _selectedDrawer = PlayerPrefs.GetString("BTElementDrawer", "BTSimpleDrawer");
+        _selectedDrawer = PlayerPrefs.GetString("BTElementDrawer", "BTWindowsDrawer");
         _autosave = PlayerPrefs.GetInt("BTAutosave", 0) == 1;
 
         Type drawerType = Type.GetType(_selectedDrawer);
@@ -139,7 +140,7 @@ public class BehaviorTreeEditor : EditorWindow
         EditorGUILayout.BeginHorizontal();
         DrawMenu();
         EditorGUILayout.BeginVertical();
-
+        
         GUILayout.BeginArea(new Rect(BehaviorTreeEditorSettings.Instance.SideMenuRect.width + 10, 10, position.width - BehaviorTreeEditorSettings.Instance.SideMenuRect.width - 10, position.height - 10));
         switch (_state)
         {
@@ -158,7 +159,10 @@ public class BehaviorTreeEditor : EditorWindow
 
     public void Save()
     {
-        BTSerializer.Serialize(_behaviorTree, AssetDatabase.GetAssetPath(_selectedAsset.GetInstanceID()));
+        if(!BTSerializer.Serialize(_behaviorTree, AssetDatabase.GetAssetPath(_selectedAsset.GetInstanceID())))
+        {
+            EditorUtility.DisplayDialog("ERROR", "Saving behavior tree failed, please look at console window", "OK");
+        }
         AssetDatabase.Refresh();
     }
 
@@ -236,7 +240,6 @@ public class BehaviorTreeEditor : EditorWindow
             _selectedDrawer = _drawers[nSelected];
             _drawer = (IBTElementDrawer)Activator.CreateInstance(Type.GetType(_selectedDrawer));
             _drawer.SetDecoratorsList(_decoratorTypes);
-            _drawer.SetMethodsList(_allMethods);
             PlayerPrefs.SetString("BTElementDrawer", _selectedDrawer);
             PlayerPrefs.Save();
         }

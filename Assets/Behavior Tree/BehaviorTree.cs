@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using UnityEditor;
 using UnityEngine;
 
 public enum TaskStatus
@@ -63,13 +64,98 @@ public class BTSerializer
         }
     }
 
-    public static void Serialize(BehaviorTree bt, string filePath)
+    public static bool Serialize(BehaviorTree bt, string filePath)
     {
+        Queue<INode> queue = new Queue<INode>();
+        if(!TryGenerateQueue(queue, bt))
+        {
+            Debug.LogWarning("Can't save behavior tree if some selector or sequence has no children");
+            return false;
+        }
+
         StreamWriter writer = new StreamWriter(filePath);
         XmlSerializer serializer = new XmlSerializer(bt.GetType());
         serializer.Serialize(writer, bt);
         writer.Flush();
         writer.Close();
+
+        return true;
+    }
+
+    private static bool TryGenerateQueue(Queue<INode> bfsQueue, BehaviorTree bt)
+    {
+        bfsQueue.Clear();
+        bfsQueue.Enqueue(bt.Child);
+
+        while (bfsQueue.Count > 0)
+        {
+            INode n = bfsQueue.Dequeue();
+            if (n != null)
+            {
+                Type t = n.GetType();
+                if (t == typeof(Decorator))
+                {
+                    FillQueueWithDecorator(bfsQueue, (Decorator)n);
+                }
+                else if (t == typeof(Sequence))
+                {
+                    if (((Sequence)n).Children.Count == 0)
+                    {
+                        return false;
+                    }
+                    FillQueueWithSequence(bfsQueue, (Sequence)n);
+                }
+                else if (t == typeof(Selector))
+                {
+                    if (((Selector)n).Children.Count == 0)
+                    {
+                        return false;
+                    }
+                    FillQueueWithSelector(bfsQueue, (Selector)n);
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private static void FillQueueWithSelector(Queue<INode> queue, Selector s)
+    {
+        List<INode> children = s.Children;
+        if (children != null)
+        {
+            foreach (INode c in children)
+            {
+                if (c != null)
+                {
+                    queue.Enqueue(c);
+                }
+            }
+        }
+    }
+
+    private static void FillQueueWithSequence(Queue<INode> queue, Sequence s)
+    {
+        List<INode> children = s.Children;
+        if (children != null)
+        {
+            foreach (INode c in children)
+            {
+                if (c != null)
+                {
+                    queue.Enqueue(c);
+                }
+            }
+        }
+    }
+
+    private static void FillQueueWithDecorator(Queue<INode> queue, Decorator d)
+    {
+        INode child = d.Child;
+        if (child != null)
+        {
+            queue.Enqueue(child);
+        }
     }
 }
 
@@ -314,7 +400,7 @@ public class Sequence : INode
                 ((INode)obj).SetParent(this);
             }
             reader.ReadEndElement();
-        }
+    }
         reader.ReadEndElement();
     }
 
@@ -322,10 +408,17 @@ public class Sequence : INode
     {
         writer.WriteStartElement("Sequence");
         writer.WriteStartElement("Children");
-        foreach (INode child in _children)
+        if (_children.Count > 0)
         {
-            writer.WriteElementString("Type", child.GetType().ToString());
-            (child as IXmlSerializable).WriteXml(writer);
+            foreach (INode child in _children)
+            {
+                writer.WriteElementString("Type", child.GetType().ToString());
+                (child as IXmlSerializable).WriteXml(writer);
+            }
+        }
+        else
+        {
+            writer.WriteString("NULL");
         }
         writer.WriteEndElement();
         writer.WriteEndElement();
@@ -347,7 +440,7 @@ public class Task : INode
     {
         get
         {
-            if(_methodType == null)
+            if (_methodType == null)
             {
                 return "";
             }
@@ -362,11 +455,11 @@ public class Task : INode
             return _methodName;
         }
     }
-
+    
     public void Initialize(Blackboard blackboard)
     {
         _blackboard = blackboard;
-        if(OnTaskTick == null)
+        if (OnTaskTick == null)
         {
             Helper.LogAndBreak("Task's OnTaskTick event is null");
         }
@@ -374,8 +467,12 @@ public class Task : INode
 
     public TaskStatus Tick(out INode nodeRunning, GameObject owner)
     {
-        TaskStatus ts = OnTaskTick(owner, _blackboard);
-        if(ts == TaskStatus.RUNNING)
+        TaskStatus ts = TaskStatus.FAILURE;
+        if (OnTaskTick != null)
+        {
+            ts = OnTaskTick(owner, _blackboard);
+        }
+        if (ts == TaskStatus.RUNNING)
         {
             nodeRunning = this;
         }
@@ -436,16 +533,21 @@ public class Task : INode
     {
         _methodName = methodName;
         _methodType = t;
+
+        if (t == null)
+        {
+            OnTaskTick = null;
+            return;
+        }
+
         Type delegateType = typeof(TickDelegate);
         MethodInfo mi = t.GetMethod(methodName);
-        if(mi.IsStatic)
-        {
-            Delegate d = Delegate.CreateDelegate(delegateType, mi);
-            EventInfo ei = typeof(Task).GetEvent("OnTaskTick");
-            MethodInfo addHandler = ei.GetAddMethod();
-            System.Object[] addHandlerArgs = { d };
-            addHandler.Invoke(this, addHandlerArgs);
-        }
+
+        Delegate d = Delegate.CreateDelegate(delegateType, mi, true);
+        EventInfo ei = typeof(Task).GetEvent("OnTaskTick");
+        MethodInfo addHandler = ei.GetAddMethod();
+        System.Object[] addHandlerArgs = { d };
+        addHandler.Invoke(this, addHandlerArgs);
     }
 
     public XmlSchema GetSchema()
@@ -472,10 +574,10 @@ public class Task : INode
     {
         writer.WriteStartElement("Task");
         writer.WriteStartElement("MethodType");
-        writer.WriteString(_methodType.ToString());
+        writer.WriteString(_methodType == null ? "NULL" : _methodType.ToString());
         writer.WriteEndElement();
         writer.WriteStartElement("MethodName");
-        writer.WriteString(_methodName);
+        writer.WriteString(_methodName == string.Empty ? "NULL" : _methodName);
         writer.WriteEndElement();
         writer.WriteEndElement();
     }

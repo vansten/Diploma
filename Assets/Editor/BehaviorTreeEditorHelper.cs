@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Reflection;
 
 public enum EditorState
 {
@@ -209,5 +210,33 @@ public static class BehaviorTreeEditorHelper
         }
 
         return null;
+    }
+
+    public static void FillMethodsList(List<string> methodsList, GameObject go)
+    {
+        methodsList.Clear();
+        MonoBehaviour[] components = go.GetComponents<MonoBehaviour>();
+        foreach (MonoBehaviour mb in components)
+        {
+            Type t = mb.GetType();
+            MethodInfo[] mis = t.GetMethods();
+            foreach (MethodInfo mi in mis)
+            {
+                if (mi.ReturnType == typeof(TaskStatus))
+                {
+                    ParameterInfo[] pis = mi.GetParameters();
+                    if (pis.Length == 2)
+                    {
+                        if (pis[0].ParameterType == typeof(GameObject) && pis[1].ParameterType == typeof(Blackboard))
+                        {
+                            string type = t.ToString();
+                            string methodName = mi.Name;
+                            string newMethod = type + "." + methodName;
+                            methodsList.Add(newMethod);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
