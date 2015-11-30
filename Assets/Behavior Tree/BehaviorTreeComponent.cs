@@ -6,8 +6,8 @@ public class BehaviorTreeComponent : MonoBehaviour
     public Blackboard BlackboardObject;
     public bool RunOnEnable;
 
-    private BehaviorTree _myTree;   
-
+    private BehaviorTree _myTree;  
+    
     void Awake()
     {
         if (BehaviorTreeAsset == null)

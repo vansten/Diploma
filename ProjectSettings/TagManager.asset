@@ -13,7 +13,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - Obstacle
   - 
   - 
   - 
@@ -40,4 +40,28 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Floor
+    uniqueID: 2086909733
+    locked: 0
+  - name: Lights
+    uniqueID: 87372159
+    locked: 0
+  - name: Walls
+    uniqueID: 1154055881
+    locked: 0
+  - name: Props
+    uniqueID: 3858411037
+    locked: 0
+  - name: New Layer
+    uniqueID: 1852631353
+    locked: 0
+  - name: New Layer
+    uniqueID: 2287900683
+    locked: 0
+  - name: New Layer
+    uniqueID: 4007968887
+    locked: 0
+  - name: Ninja
+    uniqueID: 1452913239
     locked: 0

@@ -18,8 +18,6 @@ public class BTWindowsDrawer : IBTElementDrawer
     private Rect _addRootRect = new Rect(20, 180, 250, 15);
     private Vector2 _scrollPos = Vector2.zero;
 
-    private bool _firstInit = true;
-
     public void SetDecoratorsList(List<string> decorators)
     {
         _decorators = decorators;
@@ -39,7 +37,6 @@ public class BTWindowsDrawer : IBTElementDrawer
 
         if(behaviorTree != _behaviorTree)
         {
-            _firstInit = true;
             BehaviorTreeEditorHelper.GenerateQueue(_drawingQueue, behaviorTree);
             BehaviorTreeEditor.BTEditorWindow.Repaint();
         }
@@ -53,23 +50,19 @@ public class BTWindowsDrawer : IBTElementDrawer
             {
                 case 1:
                     Sequence newSequence = new Sequence();
-                    behaviorTree.Child = newSequence;
-                    newSequence.MakeRoot(_behaviorTree);
+                    behaviorTree.AddChild(newSequence);
                     break;
                 case 2:
                     Selector newSelector = new Selector();
-                    behaviorTree.Child = newSelector;
-                    newSelector.MakeRoot(_behaviorTree);
+                    behaviorTree.AddChild(newSelector);
                     break;
                 case 3:
                     Decorator newDecorator = new Decorator();
-                    behaviorTree.Child = newDecorator;
-                    newDecorator.MakeRoot(_behaviorTree);
+                    behaviorTree.AddChild(newDecorator);
                     break;
                 case 4:
                     Task t = new Task();
-                    behaviorTree.Child = t;
-                    t.MakeRoot(_behaviorTree);
+                    behaviorTree.AddChild(t);
                     break;
                 default:
                     break;
@@ -164,7 +157,7 @@ public class BTWindowsDrawer : IBTElementDrawer
         {
             if (node.IsRoot())
             {
-                _behaviorTree.Child = null;
+                _behaviorTree.RemoveChild();
             }
             else
             {

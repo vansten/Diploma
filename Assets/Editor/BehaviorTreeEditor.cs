@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System;
 using System.Reflection;
 using System.Collections;
+using System.Linq;
+using System.IO;
 
 public class BehaviorTreeEditor : EditorWindow
 {
@@ -16,6 +18,7 @@ public class BehaviorTreeEditor : EditorWindow
     private TextAsset _selectedAsset;
     private TextAsset _prevSelectedAsset;
     private BehaviorTree _behaviorTree = null;
+    private GameObject _selectedGameObject;
     private bool _isXMLFile = false;
     private string _behaviorTreeName;
     private bool _autosave = false;
@@ -26,6 +29,8 @@ public class BehaviorTreeEditor : EditorWindow
     private EditorState _state;
     private GUIStyle _headerStyle = null;
     private GUIStyle _menuStyle = null;
+
+    private string _selectionErrorMessage;
 
     public bool Autosave
     {
@@ -77,27 +82,6 @@ public class BehaviorTreeEditor : EditorWindow
                 {
                     _drawers.Add(t.Name);
                 }
-                else
-                {
-                    MethodInfo[] mis = t.GetMethods();
-                    foreach (MethodInfo mi in mis)
-                    {
-                        if (mi.ReturnType == typeof(TaskStatus) && mi.IsStatic)
-                        {
-                            ParameterInfo[] pis = mi.GetParameters();
-                            if (pis.Length == 2)
-                            {
-                                if (pis[0].ParameterType == typeof(GameObject) && pis[1].ParameterType == typeof(Blackboard))
-                                {
-                                    string type = t.ToString();
-                                    string methodName = mi.Name;
-                                    string newMethod = type + "." + methodName;
-                                    _allMethods.Add(newMethod);
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
 
@@ -116,7 +100,9 @@ public class BehaviorTreeEditor : EditorWindow
         }
 
         _drawer.SetDecoratorsList(_decoratorTypes);
-        _drawer.SetMethodsList(_allMethods);
+        Selection.selectionChanged += SelectionChanged;
+
+        SelectionChanged();
     }
 
     void OnGUI()
@@ -140,6 +126,8 @@ public class BehaviorTreeEditor : EditorWindow
         EditorGUILayout.BeginHorizontal();
         DrawMenu();
         EditorGUILayout.BeginVertical();
+
+        
         
         GUILayout.BeginArea(new Rect(BehaviorTreeEditorSettings.Instance.SideMenuRect.width + 10, 10, position.width - BehaviorTreeEditorSettings.Instance.SideMenuRect.width - 10, position.height - 10));
         switch (_state)
@@ -157,6 +145,77 @@ public class BehaviorTreeEditor : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
+    void SelectionChanged()
+    {
+        if (Selection.gameObjects.Length > 0)
+        {
+            if (Selection.gameObjects.Length > 1)
+            {
+                _selectedGameObject = null;
+                _selectionErrorMessage = "Multiediting not supported";
+            }
+            else
+            {
+                if (_selectedGameObject != Selection.gameObjects[0])
+                {
+                    BehaviorTreeComponent btc = Selection.gameObjects[0].GetComponent<BehaviorTreeComponent>();
+                    if (btc == null)
+                    {
+                        _selectedGameObject = null;
+                        _selectionErrorMessage = "Selected game object doesn't have BehaviorTreeComponent attached";
+                    }
+                    else
+                    {
+                        _allMethods.Clear();
+
+                        Component[] comps = Selection.gameObjects[0].GetComponents<MonoBehaviour>();
+                        foreach (Component c in comps)
+                        {
+                            Type t = c.GetType();
+                            MethodInfo[] mis = new List<MethodInfo>(t.GetMethods()).Where(mi => mi.ReturnType == typeof(TaskStatus)).ToArray();
+                            foreach (MethodInfo mi in mis)
+                            {
+                                if (mi.ReturnType != typeof(TaskStatus))
+                                {
+                                    continue;
+                                }
+                                ParameterInfo[] pis = mi.GetParameters();
+                                if (pis.Length == 2)
+                                {
+                                    if (pis[0].ParameterType == typeof(GameObject) && pis[1].ParameterType == typeof(Blackboard))
+                                    {
+                                        string type = t.ToString();
+                                        string methodName = mi.Name;
+                                        string newMethod = type + "." + methodName;
+                                        _allMethods.Add(newMethod);
+                                    }
+                                }
+                            }
+                        }
+
+                        _drawer.SetMethodsList(_allMethods);
+
+                        _selectedGameObject = Selection.gameObjects[0];
+                        _selectedAsset = btc.BehaviorTreeAsset;
+                        FileSelectedChanged();
+                    }
+                }
+            }
+        }
+        else
+        {
+            _selectedGameObject = null;
+            _selectionErrorMessage = "Please, select some object on scene with BehaviorTreeComponent attached";
+        }
+
+        Repaint();
+    }
+
+    void OnDestroy()
+    {
+        Selection.selectionChanged -= SelectionChanged;
+    }
+
     public void Save()
     {
         if(!BTSerializer.Serialize(_behaviorTree, AssetDatabase.GetAssetPath(_selectedAsset.GetInstanceID())))
@@ -168,6 +227,7 @@ public class BehaviorTreeEditor : EditorWindow
 
     private void FileSelectedChanged()
     {
+        _behaviorTreeName = "";
         string path = AssetDatabase.GetAssetPath(_selectedAsset.GetInstanceID());
         _isXMLFile = path.EndsWith(".xml");
         if (_isXMLFile)
@@ -178,6 +238,7 @@ public class BehaviorTreeEditor : EditorWindow
                 string nameExt = path.Substring(path.LastIndexOf('/') + 1);
                 nameExt = nameExt.Substring(0, nameExt.LastIndexOf('.'));
                 _behaviorTreeName = nameExt;
+                _behaviorTree.Initialize(_selectedGameObject, _selectedGameObject.GetComponent<BehaviorTreeComponent>().BlackboardObject, true);
             }
         }
     }   
@@ -247,11 +308,15 @@ public class BehaviorTreeEditor : EditorWindow
 
     private void DrawBehaviorTree()
     {
-        _selectedAsset = (TextAsset)EditorGUILayout.ObjectField("Behavior Tree asset: ", _selectedAsset, typeof(TextAsset), false, BehaviorTreeEditorSettings.Instance.EditableFieldsOption);
+        if(_selectedGameObject == null)
+        {
+            EditorGUILayout.LabelField(_selectionErrorMessage);
+            return;
+        }
+
         if (_selectedAsset != null)
         {
-            EditorGUILayout.LabelField("Behavior Tree name:", BehaviorTreeEditorSettings.Instance.LabelOption);
-            EditorGUILayout.LabelField(_behaviorTreeName, BehaviorTreeEditorSettings.Instance.LabelOption);
+            EditorGUILayout.LabelField("Behavior Tree name: " + _behaviorTreeName, BehaviorTreeEditorSettings.Instance.LabelOption);
             if (_prevSelectedAsset != _selectedAsset)
             {
                 FileSelectedChanged();
@@ -290,16 +355,34 @@ public class BehaviorTreeEditor : EditorWindow
             if (GUILayout.Button("Create Behavior Tree", BehaviorTreeEditorSettings.Instance.ButtonOption))
             {
                 _behaviorTree = new BehaviorTree();
-                string path = @"Assets/" + _behaviorTreeName + ".xml";
+                string path = EditorUtility.SaveFilePanel("Choose your behavior tree path", @"Assets/", _behaviorTreeName + ".xml", "xml");
                 BTSerializer.Serialize(_behaviorTree, path);
                 AssetDatabase.Refresh();
-                _selectedAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
+                string relPath = @"Assets\" + GetRelativePath(path, Application.dataPath);
+                _selectedAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(@relPath);
+                _selectedGameObject.GetComponent<BehaviorTreeComponent>().BehaviorTreeAsset = _selectedAsset;
+                int lastInfexOfBackslash = relPath.LastIndexOf("\\");
+                int lastIndexOfDot = relPath.LastIndexOf(".");
+                int length = lastIndexOfDot - lastInfexOfBackslash;
+                _behaviorTreeName = relPath.Substring(lastInfexOfBackslash + 1, length);
                 FileSelectedChanged();
             }
             EditorGUI.EndDisabledGroup();
 
         }
         _prevSelectedAsset = _selectedAsset;
+    }
+
+    private string GetRelativePath(string filespec, string folder)
+    {
+        Uri pathUri = new Uri(filespec);
+        // Folders must end in a slash
+        if (!folder.EndsWith(Path.DirectorySeparatorChar.ToString()))
+        {
+            folder += Path.DirectorySeparatorChar;
+        }
+        Uri folderUri = new Uri(folder);
+        return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
     }
 
     private void DrawSettings()

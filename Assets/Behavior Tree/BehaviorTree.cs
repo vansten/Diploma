@@ -24,7 +24,7 @@ public enum DecoratorType
 
 public interface INode : IXmlSerializable
 {
-    void Initialize(Blackboard blackboard);
+    void Initialize(Blackboard blackboard, GameObject owner, bool created);
     void AddChild(INode child);
     INode GetParent();
     void RemoveChild(INode child = null);
@@ -171,17 +171,20 @@ public class Selector : INode
         set { _children = value; }
     }
 
-    public void Initialize(Blackboard blackboard)
+    public void Initialize(Blackboard blackboard, GameObject owner, bool created)
     {
-        if(_children.Count == 0)
+        if(_children == null || _children.Count == 0)
         {
-            Helper.LogAndBreak("Selector has no children");
+            if(!created)
+            {
+                Helper.LogAndBreak("Selector has no children");
+            }
         }
         else
         {
             foreach(INode child in _children)
             {
-                child.Initialize(blackboard);
+                child.Initialize(blackboard, owner, created);
             }
         }
     }
@@ -235,7 +238,7 @@ public class Selector : INode
         {
             if(_bt != null)
             {
-                _bt.Child = null;
+                _bt.RemoveChild();
             }
         }
     }
@@ -300,17 +303,20 @@ public class Sequence : INode
         set { _children = value; }
     }
 
-    public void Initialize(Blackboard blackboard)
+    public void Initialize(Blackboard blackboard, GameObject owner, bool created)
     {
         if (_children == null || _children.Count == 0)
         {
-            Helper.LogAndBreak("Sequence has no children");
+            if (!created)
+            {
+                Helper.LogAndBreak("Selector has no children");
+            }
         }
         else
         {
             foreach (INode child in _children)
             {
-                child.Initialize(blackboard);
+                child.Initialize(blackboard, owner, created);
             }
         }
     }
@@ -364,7 +370,7 @@ public class Sequence : INode
         {
             if (_bt != null)
             {
-                _bt.Child = null;
+                _bt.RemoveChild();
             }
         }
     }
@@ -435,6 +441,7 @@ public class Task : INode
 
     private Type _methodType;
     private string _methodName = String.Empty;
+    private GameObject _owner;
 
     public string MethodType
     {
@@ -456,10 +463,12 @@ public class Task : INode
         }
     }
     
-    public void Initialize(Blackboard blackboard)
+    public void Initialize(Blackboard blackboard, GameObject owner, bool created)
     {
         _blackboard = blackboard;
-        if (OnTaskTick == null)
+        _owner = owner;
+        SetMethod(_methodType, _methodName);
+        if (OnTaskTick == null && !created)
         {
             Helper.LogAndBreak("Task's OnTaskTick event is null");
         }
@@ -482,7 +491,6 @@ public class Task : INode
         }
         return ts;
     }
-
 
     public void AddChild(INode child)
     {
@@ -514,7 +522,7 @@ public class Task : INode
         {
             if (_bt != null)
             {
-                _bt.Child = null;
+                _bt.RemoveChild();
             }
         }
     }
@@ -543,7 +551,8 @@ public class Task : INode
         Type delegateType = typeof(TickDelegate);
         MethodInfo mi = t.GetMethod(methodName);
 
-        Delegate d = Delegate.CreateDelegate(delegateType, mi, true);
+        Component component = _owner.GetComponent(_methodType);
+        Delegate d = Delegate.CreateDelegate(delegateType, component, mi, true);
         EventInfo ei = typeof(Task).GetEvent("OnTaskTick");
         MethodInfo addHandler = ei.GetAddMethod();
         System.Object[] addHandlerArgs = { d };
@@ -566,8 +575,6 @@ public class Task : INode
         _methodName = reader.ReadString();
         reader.ReadEndElement();
         reader.ReadEndElement();
-
-        SetMethod(_methodType, _methodName);
     }
 
     public void WriteXml(XmlWriter writer)
@@ -601,15 +608,18 @@ public class Decorator : INode
         set;
     }
         
-    public void Initialize(Blackboard blackboard)
+    public void Initialize(Blackboard blackboard, GameObject owner, bool created)
     {
         if(_child == null)
         {
-            Helper.LogAndBreak("Decorator's child is null");
+            if(!created)
+            {
+                Helper.LogAndBreak("Decorator's child is null");
+            }
         }
         else
         {
-            _child.Initialize(blackboard);
+            _child.Initialize(blackboard, owner, created);
         }
     }
 
@@ -680,7 +690,7 @@ public class Decorator : INode
         {
             if (_bt != null)
             {
-                _bt.Child = null;
+                _bt.RemoveChild();
             }
         }
     }
@@ -741,7 +751,7 @@ public class BehaviorTree : IXmlSerializable
     public INode Child
     {
         get;
-        set;
+        private set;
     }
     public INode CurrentRunning;
     public float TickDelay
@@ -768,13 +778,18 @@ public class BehaviorTree : IXmlSerializable
     private GameObject _owner;
     private Blackboard _blackboard;
 
-    public void Initialize(GameObject owner, Blackboard blackboard)
+    public void Initialize(GameObject owner, Blackboard blackboard, bool created = false)
     {
         _timer = 0.0f;
         _blackboard = blackboard;
+        _owner = owner;
+
         if (Child == null)
         {
-            Helper.LogAndBreak("Behavior Tree has no child");
+            if (!created)
+            {
+                Helper.LogAndBreak("Behavior Tree has no child");
+            }
         }
         else
         {
@@ -784,10 +799,21 @@ public class BehaviorTree : IXmlSerializable
             }
             else
             {
-                _owner = owner;
-                Child.Initialize(_blackboard);
+                Child.Initialize(blackboard, owner, created);
             }
         }
+    }
+
+    public void AddChild(INode child)
+    {
+        Child = child;
+        Child.Initialize(_blackboard, _owner, true);
+        Child.MakeRoot(this);
+    }
+
+    public void RemoveChild()
+    {
+        Child = null;
     }
 
     public void Tick()
