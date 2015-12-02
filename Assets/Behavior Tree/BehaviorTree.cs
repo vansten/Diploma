@@ -164,6 +164,8 @@ public class Selector : INode
     private BehaviorTree _bt;
     private INode _parent;
     private List<INode> _children = new List<INode>();
+    private Blackboard _blackboard;
+    private GameObject _owner;
 
     public List<INode> Children
     {
@@ -173,7 +175,9 @@ public class Selector : INode
 
     public void Initialize(Blackboard blackboard, GameObject owner, bool created)
     {
-        if(_children == null || _children.Count == 0)
+        _blackboard = blackboard;
+        _owner = owner;
+        if (_children == null || _children.Count == 0)
         {
             if(!created)
             {
@@ -208,6 +212,7 @@ public class Selector : INode
     public void AddChild(INode child)
     {
         _children.Add(child);
+        child.Initialize(_blackboard, _owner, true);
     }
 
     public INode GetParent()
@@ -297,6 +302,9 @@ public class Sequence : INode
     private BehaviorTree _bt;
     private INode _parent;
     private List<INode> _children = new List<INode>();
+    private Blackboard _blackboard;
+    private GameObject _owner;
+
     public List<INode> Children
     {
         get { return _children; }
@@ -305,6 +313,8 @@ public class Sequence : INode
 
     public void Initialize(Blackboard blackboard, GameObject owner, bool created)
     {
+        _blackboard = blackboard;
+        _owner = owner;
         if (_children == null || _children.Count == 0)
         {
             if (!created)
@@ -340,6 +350,7 @@ public class Sequence : INode
     public void AddChild(INode child)
     {
         _children.Add(child);
+        child.Initialize(_blackboard, _owner, true);
     }
 
     public INode GetParent()
@@ -539,6 +550,11 @@ public class Task : INode
 
     public void SetMethod(Type t, string methodName)
     {
+        if(_owner == null)
+        {
+            return;
+        }
+
         _methodName = methodName;
         _methodType = t;
 
@@ -595,6 +611,8 @@ public class Decorator : INode
     private BehaviorTree _bt;
     private INode _parent;
     private INode _child;
+    private Blackboard _blackboard;
+    private GameObject _owner;
 
     public INode Child
     {
@@ -610,7 +628,9 @@ public class Decorator : INode
         
     public void Initialize(Blackboard blackboard, GameObject owner, bool created)
     {
-        if(_child == null)
+        _blackboard = blackboard;
+        _owner = owner;
+        if (_child == null)
         {
             if(!created)
             {
@@ -658,6 +678,7 @@ public class Decorator : INode
     public void AddChild(INode child)
     {
         Child = child;
+        child.Initialize(_blackboard, _owner, true);
     }
 
     public INode GetParent()
