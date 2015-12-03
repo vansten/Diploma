@@ -4,6 +4,8 @@ using System.Collections;
 public class Ninja : MonoBehaviour
 {
     [SerializeField]
+    private GameObject _ninjaSprite;
+    [SerializeField]
     private Transform _pointerTransform;
     [SerializeField]
     private float _sprintMultiplier = 5.0f;
@@ -42,6 +44,6 @@ public class Ninja : MonoBehaviour
     {
         Vector3 direction = _pointerTransform.position - transform.position;
         direction.Normalize();
-        transform.up = direction;
+        _ninjaSprite.transform.up = direction;
     }
 }

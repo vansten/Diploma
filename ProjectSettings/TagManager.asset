@@ -14,7 +14,7 @@ TagManager:
   - 
   - 
   - Obstacle
-  - 
+  - Floor
   - 
   - 
   - 
@@ -59,7 +59,7 @@ TagManager:
   - name: New Layer
     uniqueID: 2287900683
     locked: 0
-  - name: New Layer
+  - name: Enemies
     uniqueID: 4007968887
     locked: 0
   - name: Ninja
