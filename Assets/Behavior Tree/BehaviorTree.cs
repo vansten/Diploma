@@ -568,6 +568,10 @@ public class Task : INode
         MethodInfo mi = t.GetMethod(methodName);
 
         Component component = _owner.GetComponent(_methodType);
+        if(component == null || mi == null)
+        {
+            return;
+        }
         Delegate d = Delegate.CreateDelegate(delegateType, component, mi, true);
         EventInfo ei = typeof(Task).GetEvent("OnTaskTick");
         MethodInfo addHandler = ei.GetAddMethod();

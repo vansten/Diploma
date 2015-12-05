@@ -12,7 +12,7 @@ GameObject:
   - 33: {fileID: 3345238}
   - 23: {fileID: 2344980}
   - 114: {fileID: 11460998}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: NinjaLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31,7 +31,7 @@ GameObject:
   - 114: {fileID: 11466940}
   - 58: {fileID: 5874314}
   - 50: {fileID: 5097330}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Ninja
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47,7 +47,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 458734}
   - 212: {fileID: 21240582}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: NinjaSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61,7 +61,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 142040}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.73182583, y: 8.42776012, z: 0}
+  m_LocalPosition: {x: 11.2200003, y: 6.28999996, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 458734}
@@ -221,9 +221,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00452f905767ff24fb4e0261d391342e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsDead: 0
+  _shurikenPrefab: {fileID: 11459734, guid: 68e3b9a9dad90d346b46dae48c9470cd, type: 2}
   _ninjaSprite: {fileID: 177568}
   _pointerTransform: {fileID: 0}
   _sprintMultiplier: 5
+  _hp: 10
 --- !u!212 &21240582
 SpriteRenderer:
   m_ObjectHideFlags: 1

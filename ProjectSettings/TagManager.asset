@@ -15,10 +15,10 @@ TagManager:
   - 
   - Obstacle
   - Floor
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Enemy
+  - Usable
+  - Shuriken
   - 
   - 
   - 
@@ -56,7 +56,7 @@ TagManager:
   - name: New Layer
     uniqueID: 1852631353
     locked: 0
-  - name: New Layer
+  - name: Shurikens
     uniqueID: 2287900683
     locked: 0
   - name: Enemies
