@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BehaviorTree>
+  <BehaviorTree>
+    <TickDelay>0.2</TickDelay>
+    <Child>Selector<Selector><Children><Type>Selector</Type><Selector><Children><Type>Task</Type><Task><MethodType>Enemy</MethodType><MethodName>Chase</MethodName></Task><Type>Task</Type><Task><MethodType>Enemy</MethodType><MethodName>Attack</MethodName></Task></Children></Selector><Type>Task</Type><Task><MethodType>Enemy</MethodType><MethodName>SearchForEnemy</MethodName></Task><Type>Task</Type><Task><MethodType>Enemy</MethodType><MethodName>Patrol</MethodName></Task><Type>Decorator</Type><Decorator><Child>Task<Task><MethodType>Enemy</MethodType><MethodName>Idle</MethodName></Task></Child><DecoratorType>ALWAYS_FAIL</DecoratorType></Decorator></Children></Selector></Child>
+  </BehaviorTree>
+</BehaviorTree>

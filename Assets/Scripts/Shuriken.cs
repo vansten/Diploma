@@ -17,18 +17,21 @@ public class Shuriken : MonoBehaviour
         _direction = dir;
     }
 
-    void OnTriggerEnter2D(Collider2D col)
+    void OnCollisionEnter2D(Collision2D col)
     {
+        if (col.collider.isTrigger)
+        {
+            return;
+        }
+
         Enemy e = col.gameObject.GetComponent<Enemy>();
-        if(e != null)
+        if (e != null)
         {
             e.GetDamage(10);
             Destroy(gameObject);
+            return;
         }
-    }
 
-    void OnCollisionEnter2D(Collision2D col)
-    {
         _hitCount += 1;
         if(_hitCount > 5)
         {

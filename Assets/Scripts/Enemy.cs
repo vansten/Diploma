@@ -16,6 +16,8 @@ public class Enemy : MonoBehaviour
     private PatrolMode _patrolMode;
     [SerializeField]
     private GameObject _enemySprite;
+    [SerializeField]
+    private float _hpThreshold;
 
     private LayerMask _blockingLayer;
 
@@ -112,7 +114,7 @@ public class Enemy : MonoBehaviour
 
     public virtual TaskStatus Chase(GameObject owner, Blackboard blackboard)
     {
-        if(_hp < 30)
+        if(_hp < _hpThreshold)
         {
             return TaskStatus.FAILURE;
         }
@@ -201,7 +203,7 @@ public class Enemy : MonoBehaviour
 
     public virtual TaskStatus SearchForEnemy(GameObject owner, Blackboard blackboard)
     {
-        if (_hp < 30)
+        if (_hp < _hpThreshold)
         {
             return TaskStatus.FAILURE;
         }
@@ -272,7 +274,7 @@ public class Enemy : MonoBehaviour
 
     public virtual TaskStatus Patrol(GameObject owner, Blackboard blackboard)
     {
-        if (_hp < 30)
+        if (_hp < _hpThreshold)
         {
             return TaskStatus.FAILURE;
         }
@@ -322,7 +324,7 @@ public class Enemy : MonoBehaviour
 
     public virtual TaskStatus Idle(GameObject owner, Blackboard blackboard)
     {
-        if (_hp < 30)
+        if (_hp < _hpThreshold)
         {
             return TaskStatus.FAILURE;
         }
@@ -380,9 +382,10 @@ public class Enemy : MonoBehaviour
         }
 
         _hp -= dmg;
-        if(_hp < 0)
+        if(_hp <= 0)
         {
             _hp = 0;
+            gameObject.SetActive(false);
         }
     }
 

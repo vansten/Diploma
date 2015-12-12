@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Ninja : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class Ninja : MonoBehaviour
     private float _sprintMultiplier = 5.0f;
     [SerializeField]
     private int _hp;
-
+    
     private Animator _myAnimator;
     private float _sprintTimer = 0.0f;
     private Vector3 _initPosition;
@@ -40,7 +41,7 @@ public class Ninja : MonoBehaviour
         }
 
         Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0.0f);
-        if(Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift))
         {
             _sprintTimer += Time.deltaTime;
         }
