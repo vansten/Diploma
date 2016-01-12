@@ -51000,6 +51000,7 @@ GameObject:
   - 4: {fileID: 934867474}
   - 114: {fileID: 934867475}
   - 114: {fileID: 934867476}
+  - 95: {fileID: 934867477}
   m_Layer: 0
   m_Name: Bro1
   m_TagString: Untagged
@@ -51050,6 +51051,23 @@ MonoBehaviour:
   BehaviorTreeAsset: {fileID: 4900000, guid: 858900d47c57ae44d92102fd3fc7a253, type: 3}
   BlackboardObject: {fileID: 411773858}
   RunOnEnable: 0
+--- !u!95 &934867477
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 934867473}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 57d25eace8be21a45a51cbf09d4f1d62, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!1 &935316072
 GameObject:
   m_ObjectHideFlags: 0
