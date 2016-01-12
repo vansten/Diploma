@@ -8,70 +8,68 @@ public enum PatrolMode
     ThereAndBack
 }
 
-public class Enemy : MonoBehaviour
+public class Enemy : Humanoid
 {
     [SerializeField]
     private List<Transform> _patrolWaypoints;
     [SerializeField]
     private PatrolMode _patrolMode;
     [SerializeField]
-    private GameObject _enemySprite;
+    protected GameObject _enemySprite;
     [SerializeField]
-    private float _hpThreshold;
+    protected float _hpThreshold;
 
-    private LayerMask _blockingLayer;
+    protected Animator _enemyAnimator;
+    protected SpriteRenderer _enemySpriteRenderer;
 
-    private int _hp;
+    protected LayerMask _blockingLayer;
 
-    private bool _playerSeen;
-    private bool _playerLost;
+    protected bool _playerSeen;
+    protected bool _playerLost;
 
-    private float _attackTimer = 0.0f;
+    protected float _attackTimer = 0.0f;
 
-    private Ninja _player;
-    private List<Vector3> _wayToPlayerLastPosition;
-    private int _currentIndexToPlayer;
+    protected Ninja _player;
+    protected List<Vector3> _wayToPlayerLastPosition;
+    protected int _currentIndexToPlayer;
 
-    private float _searchingTimer = 0.0f;
-    private bool _reachedLastPoint;
-    private Vector3 _initialRotation;
-    private Vector3 _targetRotation;
-    private Vector3 _targetRotation2;
+    protected float _searchingTimer = 0.0f;
+    protected bool _reachedLastPoint;
+    protected Vector3 _initialRotation;
+    protected Vector3 _targetRotation;
+    protected Vector3 _targetRotation2;
 
-    private Transform _currentTarget;
-    private bool _reachedTarget = false;
+    protected Transform _currentTarget;
+    protected bool _reachedTarget = false;
 
-    private List<Vector3> _wayToCurrentTarget = new List<Vector3>();
-    private int _currentWaypoint = 0;
-    private int _currentPatrolWaypoint = 0;
-    private int _patrolDirection = 1;
+    protected List<Vector3> _wayToCurrentTarget = new List<Vector3>();
+    protected int _currentWaypoint = 0;
+    protected int _currentPatrolWaypoint = 0;
+    protected int _patrolDirection = 1;
 
-    private float _healingTimer = 0.0f;
-    private bool _healingPlaceFound = false;
-    private bool _healingPlaceReached = false;
-    private bool _healing = false;
+    protected float _healingTimer = 0.0f;
+    protected bool _healingPlaceFound = false;
+    protected bool _healingPlaceReached = false;
+    protected bool _healing = false;
 
-    private float _idleTimer = 0.0f;
-    private bool _idle;
-    private UsableObject _someObject;
-    private List<Vector3> _wayToSomeObject;
-    private int _currentIndexOfWay;
-    private bool _usingObject;
+    protected float _idleTimer = 0.0f;
+    protected bool _idle;
+    protected UsableObject _someObject;
+    protected List<Vector3> _wayToSomeObject;
+    protected int _currentIndexOfWay;
+    protected bool _usingObject;
 
-    private int _playerLayer;
+    protected int _playerLayer;
 
     void Awake()
     {
         _playerLayer = LayerMask.NameToLayer("Player");
         _blockingLayer = LayerMask.NameToLayer("Obstacle");
+        _enemySpriteRenderer = _enemySprite.GetComponent<SpriteRenderer>();
+        _enemyAnimator = GetComponent<Animator>();
     }
 
-    void OnEnable()
-    {
-        _hp = 100;
-    }
-
-    public virtual TaskStatus Flee(GameObject owner, Blackboard blackboard)
+    public TaskStatus Flee(GameObject owner, Blackboard blackboard)
     {
         if (_healingPlaceReached)
         {
@@ -97,8 +95,10 @@ public class Enemy : MonoBehaviour
         float magnitude = dist.magnitude;
         dist.Normalize();
         transform.position += dist * Time.deltaTime * 2.5f;
-        
-        if(magnitude < 0.12f)
+        _enemyAnimator.SetBool("isWalking", true);
+        LookAt(_wayToCurrentTarget[_currentWaypoint]);
+
+        if (magnitude < 0.12f)
         {
             _currentWaypoint += 1;
             if(_currentWaypoint >= _wayToCurrentTarget.Count)
@@ -112,7 +112,7 @@ public class Enemy : MonoBehaviour
         return TaskStatus.RUNNING;
     }
 
-    public virtual TaskStatus Chase(GameObject owner, Blackboard blackboard)
+    public TaskStatus Chase(GameObject owner, Blackboard blackboard)
     {
         if(_hp < _hpThreshold)
         {
@@ -131,62 +131,63 @@ public class Enemy : MonoBehaviour
 
         Vector3 dir = _player.transform.position - transform.position;
         float currentDistance = dir.magnitude;
-        if (currentDistance < 0.5f)
+        if (currentDistance < 0.65f)
         {
             return TaskStatus.FAILURE;
         }
         dir.Normalize();
+        LookAt(_player.transform.position);
         transform.position += dir * Time.deltaTime;
+        _enemyAnimator.SetBool("isWalking", true);
 
         return TaskStatus.RUNNING;
     }
 
-    public virtual TaskStatus Attack(GameObject owner, Blackboard blackboard)
+    public TaskStatus Attack(GameObject owner, Blackboard blackboard)
     {
         if (!_playerSeen || _playerLost)
         {
             _attackTimer = 0.0f;
+            _enemyAnimator.SetBool("isWalking", false);
             return TaskStatus.FAILURE;
         }
 
         if (_player != null && _player.IsDead)
         {
             _attackTimer = 0.0f;
-            return TaskStatus.FAILURE;
+            _enemyAnimator.SetBool("isWalking", false);
+            return TaskStatus.SUCCESS;
         }
 
         Vector3 dist = _player.transform.position - transform.position;
+        LookAt(_player.transform.position);
         float distance = dist.magnitude;
         if(distance > 0.65f)
         {
             _attackTimer = 0.0f;
+            _enemyAnimator.SetBool("isWalking", false);
             return TaskStatus.FAILURE;
         }
 
-        _attackTimer += Time.deltaTime;
-        if(_attackTimer > 0.5f)
-        {
-            _attackTimer = 0.0f;
-            _player.GetDamage(2);
-            return TaskStatus.RUNNING;
-        }
+        _enemyAnimator.SetBool("isAttacking", true);
 
         return TaskStatus.RUNNING;
     }
 
-    public virtual TaskStatus Heal(GameObject owner, Blackboard blackboard)
+    public TaskStatus Heal(GameObject owner, Blackboard blackboard)
     {
         if (!_healingPlaceReached)
         {
             return TaskStatus.FAILURE;
         }
+        _enemyAnimator.SetBool("isWalking", false);
 
         _healing = true;
         _healingTimer += Time.deltaTime;
         if(_healingTimer > 0.5f)
         {
             _healingTimer = 0.0f;
-            _hp += 3;
+            HP += 3;
         }
 
         if(_hp > 75)
@@ -201,7 +202,7 @@ public class Enemy : MonoBehaviour
         return TaskStatus.RUNNING;
     }
 
-    public virtual TaskStatus SearchForEnemy(GameObject owner, Blackboard blackboard)
+    public TaskStatus SearchForEnemy(GameObject owner, Blackboard blackboard)
     {
         if (_hp < _hpThreshold)
         {
@@ -226,20 +227,6 @@ public class Enemy : MonoBehaviour
         if (_reachedLastPoint)
         {
             _searchingTimer += Time.deltaTime;
-            if(_searchingTimer > 3.0f)
-            {
-                float lerpTime = _searchingTimer - 3.0f;
-                _enemySprite.transform.rotation = Quaternion.Euler(Vector3.Lerp(_targetRotation2, _initialRotation, lerpTime));
-            }
-            else if(_searchingTimer > 1.0f)
-            {
-                float lerpTime = 0.5f * (_searchingTimer - 1.0f);
-                _enemySprite.transform.rotation = Quaternion.Euler(Vector3.Lerp(_targetRotation, _targetRotation2, lerpTime));
-            }
-            else
-            {
-                _enemySprite.transform.rotation = Quaternion.Euler(Vector3.Lerp(_initialRotation, _targetRotation, _searchingTimer));
-            }
 
             if(_searchingTimer > 4.0f)
             {
@@ -256,7 +243,9 @@ public class Enemy : MonoBehaviour
         float distance = dist.magnitude;
         dist.Normalize();
         transform.position += dist * Time.deltaTime * 0.5f;
-        if(distance < 0.12f)
+        _enemyAnimator.SetBool("isWalking", true);
+        LookAt(_wayToPlayerLastPosition[_currentIndexToPlayer]);
+        if (distance < 0.12f)
         {
             _currentIndexToPlayer += 1;
             if(_currentIndexToPlayer >= _wayToPlayerLastPosition.Count)
@@ -272,7 +261,7 @@ public class Enemy : MonoBehaviour
         return TaskStatus.RUNNING;
     }
 
-    public virtual TaskStatus Patrol(GameObject owner, Blackboard blackboard)
+    public TaskStatus Patrol(GameObject owner, Blackboard blackboard)
     {
         if (_hp < _hpThreshold)
         {
@@ -306,6 +295,8 @@ public class Enemy : MonoBehaviour
         float magnitude = dist.magnitude;
         dist.Normalize();
         transform.position += dist * Time.deltaTime;
+        _enemyAnimator.SetBool("isWalking", true);
+        LookAt(_wayToCurrentTarget[_currentWaypoint]);
         if (magnitude < 0.12f)
         {
             _currentWaypoint += 1;
@@ -322,7 +313,7 @@ public class Enemy : MonoBehaviour
         return TaskStatus.RUNNING;
     }
 
-    public virtual TaskStatus Idle(GameObject owner, Blackboard blackboard)
+    public TaskStatus Idle(GameObject owner, Blackboard blackboard)
     {
         if (_hp < _hpThreshold)
         {
@@ -334,7 +325,7 @@ public class Enemy : MonoBehaviour
             return TaskStatus.FAILURE;
         }
 
-        if(_usingObject && _idleTimer > 5.0f)
+        if (_usingObject && _idleTimer > 5.0f)
         {
             _idle = false;
             _someObject.ReleaseMe();
@@ -342,9 +333,10 @@ public class Enemy : MonoBehaviour
             return TaskStatus.SUCCESS;
         }
 
-        if(_usingObject)
+        if (_usingObject)
         {
             _idleTimer += Time.deltaTime;
+            _enemyAnimator.SetBool("isWalking", false);
             return TaskStatus.RUNNING;
         }
 
@@ -352,6 +344,8 @@ public class Enemy : MonoBehaviour
         float magnitude = dist.magnitude;
         dist.Normalize();
         transform.position += dist * Time.deltaTime;
+        _enemyAnimator.SetBool("isWalking", true);
+        LookAt(_wayToSomeObject[_currentIndexOfWay]);
         if(magnitude < 0.12f)
         {
             _currentIndexOfWay += 1;
@@ -374,22 +368,7 @@ public class Enemy : MonoBehaviour
         _wayToSomeObject = NavigationManager.Instance.FindWay(transform.position, _someObject.transform.position);
     }
 
-    public void GetDamage(int dmg)
-    {
-        if(_healing)
-        {
-            return;
-        }
-
-        _hp -= dmg;
-        if(_hp <= 0)
-        {
-            _hp = 0;
-            gameObject.SetActive(false);
-        }
-    }
-
-    private void NextPatrolWaypoint()
+    protected void NextPatrolWaypoint()
     {
         _currentPatrolWaypoint += _patrolDirection;
         if (_currentPatrolWaypoint >= _patrolWaypoints.Count)
@@ -416,7 +395,13 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void OnTriggerStay2D(Collider2D col)
+    public void OnAttack()
+    {
+        _player.GetDamage(2);
+        _enemyAnimator.SetBool("isAttacking", false);
+    }
+
+    protected void OnTriggerStay2D(Collider2D col)
     {
         if (col.gameObject.layer == _playerLayer)
         {
@@ -438,7 +423,7 @@ public class Enemy : MonoBehaviour
 
             if(wallDetected)
             {
-                if(_playerSeen)
+                if (_playerSeen)
                 {
                     _playerSeen = false;
                     _playerLost = true;
@@ -450,7 +435,7 @@ public class Enemy : MonoBehaviour
             }
             else
             {
-                if(!_playerSeen)
+                if (!_playerSeen)
                 {
                     _playerLost = false;
                     _playerSeen = true;
@@ -463,7 +448,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void OnTriggerExit2D(Collider2D col)
+    protected void OnTriggerExit2D(Collider2D col)
     {
         if(col.gameObject.layer == _playerLayer && _playerSeen)
         {

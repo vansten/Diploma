@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BehaviorTree>
+  <BehaviorTree>
+    <TickDelay>0.3</TickDelay>
+    <Child>Selector<Selector><Children><Type>Task</Type><Task><MethodType>DistanceEnemy</MethodType><MethodName>Attack</MethodName></Task><Type>Task</Type><Task><MethodType>DistanceEnemy</MethodType><MethodName>Chase</MethodName></Task><Type>Sequence</Type><Sequence><Children><Type>Task</Type><Task><MethodType>DistanceEnemy</MethodType><MethodName>ReturnToBasePosition</MethodName></Task><Type>Decorator</Type><Decorator><Child>Task<Task><MethodType>DistanceEnemy</MethodType><MethodName>Stay</MethodName></Task></Child><DecoratorType>ALWAYS_SUCC</DecoratorType></Decorator></Children></Sequence></Children></Selector></Child>
+  </BehaviorTree>
+</BehaviorTree>

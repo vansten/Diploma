@@ -2,11 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Ninja : MonoBehaviour
+public class Ninja : Humanoid
 {
-    [HideInInspector]
-    public bool IsDead;
-
     [SerializeField]
     private Shuriken _shurikenPrefab;
     [SerializeField]
@@ -15,22 +12,24 @@ public class Ninja : MonoBehaviour
     private Transform _pointerTransform;
     [SerializeField]
     private float _sprintMultiplier = 5.0f;
-    [SerializeField]
-    private int _hp;
     
     private Animator _myAnimator;
     private float _sprintTimer = 0.0f;
     private Vector3 _initPosition;
-    private int _initHP;
     private bool _godMode;
+
+    public bool HasKey
+    {
+        get;
+        private set;
+    }
 
     void Start()
     {
         _myAnimator = GetComponent<Animator>();
-        IsDead = false;
         _initPosition = transform.position;
-        _initHP = _hp;
         _godMode = false;
+        HasKey = false;
     }
 
     void FixedUpdate()
@@ -57,6 +56,7 @@ public class Ninja : MonoBehaviour
         if(_myAnimator != null)
         {
             _myAnimator.SetBool("isWalking", movement.magnitude > 0.0f);
+            _myAnimator.SetFloat("speed", multiplier);
         }
     }
 
@@ -68,7 +68,7 @@ public class Ninja : MonoBehaviour
             if (_godMode)
             {
                 IsDead = false;
-                _hp = _initHP;
+                HP = _initHP;
             }
         }
 
@@ -77,7 +77,7 @@ public class Ninja : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.R))
             {
                 transform.position = _initPosition;
-                _hp = _initHP;
+                HP = _initHP;
                 IsDead = false;
             }
 
@@ -86,11 +86,7 @@ public class Ninja : MonoBehaviour
 
         if(Input.GetMouseButtonDown(0))
         {
-            Vector3 dir = _pointerTransform.position - transform.position;
-            dir.Normalize();
-            Shuriken s = Instantiate(_shurikenPrefab);
-            s.transform.position = transform.position;
-            s.SetDirection(dir);
+            _myAnimator.SetBool("isAttacking", true);
         }
     }
 
@@ -101,23 +97,27 @@ public class Ninja : MonoBehaviour
             return;
         }
 
-        Vector3 direction = _pointerTransform.position - transform.position;
-        direction.Normalize();
-        _ninjaSprite.transform.up = direction;
+        LookAt(_pointerTransform.position);
     }
 
-    public void GetDamage(int dmg)
+    public override void GetDamage(int dmg)
     {
-        if(_godMode)
-        {
-            return;
-        }
+        if (_godMode) return;
+        HP -= dmg;
+    }
 
-        _hp -= dmg;
-        if(_hp < 0)
-        {
-            _hp = 0;
-            IsDead = true;
-        }
+    public void Attack()
+    {
+        Vector3 dir = _pointerTransform.position - transform.position;
+        dir.Normalize();
+        Shuriken s = Instantiate(_shurikenPrefab);
+        s.transform.position = transform.position;
+        s.SetDirection(dir);
+        _myAnimator.SetBool("isAttacking", false);
+    }
+
+    public void GetKey()
+    {
+        HasKey = true;
     }
 }

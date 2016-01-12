@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class WorldManager : Singleton<WorldManager>
 {
+    public Ninja Player;
+    public Transform Exit;
+
     [SerializeField]
     private List<Transform> _healingPlaces;
     

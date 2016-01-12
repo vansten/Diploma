@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BehaviorTree>
+  <BehaviorTree>
+    <TickDelay>1</TickDelay>
+    <Child>Sequence<Sequence><Children><Type>Task</Type><Task><MethodType>Bro</MethodType><MethodName>GrabBook</MethodName></Task><Type>Task</Type><Task><MethodType>Bro</MethodType><MethodName>RunAway</MethodName></Task></Children></Sequence></Child>
+  </BehaviorTree>
+</BehaviorTree>

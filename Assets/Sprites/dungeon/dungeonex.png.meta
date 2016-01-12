@@ -1,0 +1,496 @@
+fileFormatVersion: 2
+guid: e9d025239a60f8546b7591e22fe53bd8
+timeCreated: 1452542876
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: dungeonex_0
+    21300002: dungeonex_1
+    21300004: dungeonex_2
+    21300006: chairRight
+    21300008: chairDown
+    21300010: tableEmpty
+    21300012: chairUp
+    21300014: tableWithSth
+    21300016: chairLeft
+    21300018: longTableHoriz
+    21300020: longTableVert
+    21300022: animal
+    21300024: woodenBedLeft
+    21300026: oil
+    21300028: dirt
+    21300030: dirt2
+    21300032: spiderWeb
+    21300034: spiderWeb2
+    21300036: metalBedDown
+    21300038: metalBedUp
+    21300040: metalBedLeft
+    21300042: metalBedRight
+    21300044: dungeonex_22
+    21300046: floor
+    21300048: bones
+    21300050: skul
+    21300052: chainLeft
+    21300054: chainRight
+    21300056: skeleton
+    21300058: skuls
+    21300060: dungeonex_30
+    21300062: dungeonex_31
+    21300064: dungeonex_32
+    21300066: dungeonex_33
+    21300068: dungeonex_34
+    21300070: crate
+    21300072: dungeonex_36
+    21300074: woodenBedDown
+    21300076: woodenBedUp
+    21300078: woodenBedRight
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: -1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 128
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: dungeonex_0
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 258
+        width: 29
+        height: 53
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dungeonex_1
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 289
+        width: 27
+        height: 30
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dungeonex_2
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 256
+        width: 31
+        height: 24
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: chairRight
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 256
+        width: 22
+        height: 32
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: chairDown
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 288
+        width: 24
+        height: 32
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: tableEmpty
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 290
+        width: 32
+        height: 30
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: chairUp
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 287
+        width: 25
+        height: 25
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: tableWithSth
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 258
+        width: 32
+        height: 30
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: chairLeft
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 256
+        width: 22
+        height: 31
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: longTableHoriz
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 256
+        width: 80
+        height: 42
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: longTableVert
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 224
+        width: 29
+        height: 86
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: animal
+      rect:
+        serializedVersion: 2
+        x: 226
+        y: 244
+        width: 17
+        height: 11
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenBedLeft
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 192
+        width: 71
+        height: 55
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 1, w: 0}
+    - name: oil
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 199
+        width: 29
+        height: 22
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dirt
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 161
+        width: 31
+        height: 28
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dirt2
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 161
+        width: 17
+        height: 29
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spiderWeb
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 161
+        width: 32
+        height: 23
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spiderWeb2
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 128
+        width: 24
+        height: 32
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: metalBedDown
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 64
+        width: 52
+        height: 88
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: metalBedUp
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 64
+        width: 52
+        height: 77
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: metalBedLeft
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 64
+        width: 74
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: metalBedRight
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 74
+        height: 65
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dungeonex_22
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 48
+        width: 20
+        height: 14
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: floor
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 1
+        width: 31
+        height: 31
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: bones
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 32
+        height: 31
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: skul
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 41
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: chainLeft
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 40
+        width: 7
+        height: 20
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: chainRight
+      rect:
+        serializedVersion: 2
+        x: 53
+        y: 40
+        width: 7
+        height: 19
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: skeleton
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 3
+        width: 32
+        height: 57
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: skuls
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dungeonex_30
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 128
+        width: 13
+        height: 32
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dungeonex_31
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 5
+        width: 30
+        height: 27
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dungeonex_32
+      rect:
+        serializedVersion: 2
+        x: 249
+        y: 0
+        width: 7
+        height: 61
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dungeonex_33
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 49
+        width: 31
+        height: 12
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dungeonex_34
+      rect:
+        serializedVersion: 2
+        x: 288
+        y: 0
+        width: 5
+        height: 61
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: crate
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 60
+        width: 44
+        height: 68
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: dungeonex_36
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 128
+        width: 12
+        height: 32
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenBedDown
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 160
+        width: 48
+        height: 71
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenBedUp
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 160
+        width: 48
+        height: 71
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: woodenBedRight
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 128
+        width: 71
+        height: 55
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

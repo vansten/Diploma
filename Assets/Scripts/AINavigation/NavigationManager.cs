@@ -44,7 +44,21 @@ public class NavigationManager : Singleton<NavigationManager>
     [ContextMenu("Fill nav points")]
     void FillNavPoints()
     {
-        _navPoints = new List<Transform>(FindObjectsOfType<Transform>()).Where(t => (t.gameObject.layer & (1 << _navPointsLayers)) != 0 && t.GetComponent<SpriteRenderer>() != null).ToList();
+        _navPoints = new List<Transform>(FindObjectsOfType<Transform>()).Where(t => (t.gameObject.layer == LayerMask.NameToLayer("Floor")) && t.GetComponent<SpriteRenderer>() != null).Distinct().ToList();
+        int enemyLayer = LayerMask.NameToLayer("Enemy");
+        int playerLayer = LayerMask.NameToLayer("Player");
+        for (int i = 0; i < _navPoints.Count; ++i)
+        {
+            RaycastHit2D[] hits = Physics2D.RaycastAll(_navPoints[i].transform.position, Vector3.forward);
+            foreach (RaycastHit2D hit in hits)
+            {
+                if (hit.collider != null && !hit.collider.isTrigger && hit.collider.gameObject != _navPoints[i].gameObject && hit.collider.gameObject.layer != enemyLayer && hit.collider.gameObject.layer != playerLayer)
+                {
+                    _navPoints.RemoveAt(i);
+                    break;
+                }
+            }
+        }
         _navPoints.Sort((t1, t2) => { return t1.name.CompareTo(t2.name); });
     }
 

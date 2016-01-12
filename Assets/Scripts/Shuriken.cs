@@ -24,9 +24,13 @@ public class Shuriken : MonoBehaviour
             return;
         }
 
-        Enemy e = col.gameObject.GetComponent<Enemy>();
+        Humanoid e = col.gameObject.GetComponent<Humanoid>();
         if (e != null)
         {
+            if (e.GetType() == typeof(Ninja))
+            {
+                return;
+            }
             e.GetDamage(10);
             Destroy(gameObject);
             return;

@@ -43,6 +43,8 @@ public class BehaviorTreeEditor : EditorWindow
     {
         BTEditorWindow = GetWindow<BehaviorTreeEditor>();
         BTEditorWindow.Init();
+        BTEditorWindow.maxSize = new Vector2(1920, 1080);
+        BTEditorWindow.minSize = new Vector2(1600, 900);
         BehaviorTreeEditorSettings.Instance.Load();
         BehaviorTreeEditorSettings.Instance.Init();
     }

@@ -53,15 +53,18 @@ TagManager:
   - name: Props
     uniqueID: 3858411037
     locked: 0
-  - name: New Layer
-    uniqueID: 1852631353
-    locked: 0
   - name: Shurikens
     uniqueID: 2287900683
+    locked: 0
+  - name: Bros
+    uniqueID: 1852631353
     locked: 0
   - name: Enemies
     uniqueID: 4007968887
     locked: 0
   - name: Ninja
     uniqueID: 1452913239
+    locked: 0
+  - name: UI
+    uniqueID: 928491355
     locked: 0
