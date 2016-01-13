@@ -182,9 +182,9 @@ public class BehaviorTreeEditor : EditorWindow
                                     continue;
                                 }
                                 ParameterInfo[] pis = mi.GetParameters();
-                                if (pis.Length == 2)
+                                if (pis.Length == 1)
                                 {
-                                    if (pis[0].ParameterType == typeof(GameObject) && pis[1].ParameterType == typeof(Blackboard))
+                                    if (pis[0].ParameterType == typeof(GameObject))
                                     {
                                         string type = t.ToString();
                                         string methodName = mi.Name;
@@ -240,7 +240,7 @@ public class BehaviorTreeEditor : EditorWindow
                 string nameExt = path.Substring(path.LastIndexOf('/') + 1);
                 nameExt = nameExt.Substring(0, nameExt.LastIndexOf('.'));
                 _behaviorTreeName = nameExt;
-                _behaviorTree.Initialize(_selectedGameObject, _selectedGameObject.GetComponent<BehaviorTreeComponent>().BlackboardObject, true);
+                _behaviorTree.Initialize(_selectedGameObject, true);
             }
         }
     }   

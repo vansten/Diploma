@@ -69,7 +69,7 @@ public class Enemy : Humanoid
         _enemyAnimator = GetComponent<Animator>();
     }
 
-    public TaskStatus Flee(GameObject owner, Blackboard blackboard)
+    public TaskStatus Flee(GameObject owner)
     {
         if (_healingPlaceReached)
         {
@@ -112,7 +112,7 @@ public class Enemy : Humanoid
         return TaskStatus.RUNNING;
     }
 
-    public TaskStatus Chase(GameObject owner, Blackboard blackboard)
+    public TaskStatus Chase(GameObject owner)
     {
         if(_hp < _hpThreshold)
         {
@@ -143,7 +143,7 @@ public class Enemy : Humanoid
         return TaskStatus.RUNNING;
     }
 
-    public TaskStatus Attack(GameObject owner, Blackboard blackboard)
+    public TaskStatus Attack(GameObject owner)
     {
         if (!_playerSeen || _playerLost)
         {
@@ -174,7 +174,7 @@ public class Enemy : Humanoid
         return TaskStatus.RUNNING;
     }
 
-    public TaskStatus Heal(GameObject owner, Blackboard blackboard)
+    public TaskStatus Heal(GameObject owner)
     {
         if (!_healingPlaceReached)
         {
@@ -202,7 +202,7 @@ public class Enemy : Humanoid
         return TaskStatus.RUNNING;
     }
 
-    public TaskStatus SearchForEnemy(GameObject owner, Blackboard blackboard)
+    public TaskStatus SearchForEnemy(GameObject owner)
     {
         if (_hp < _hpThreshold)
         {
@@ -261,7 +261,7 @@ public class Enemy : Humanoid
         return TaskStatus.RUNNING;
     }
 
-    public TaskStatus Patrol(GameObject owner, Blackboard blackboard)
+    public TaskStatus Patrol(GameObject owner)
     {
         if (_hp < _hpThreshold)
         {
@@ -313,7 +313,7 @@ public class Enemy : Humanoid
         return TaskStatus.RUNNING;
     }
 
-    public TaskStatus Idle(GameObject owner, Blackboard blackboard)
+    public TaskStatus Idle(GameObject owner)
     {
         if (_hp < _hpThreshold)
         {

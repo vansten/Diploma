@@ -3,7 +3,6 @@
 public class BehaviorTreeComponent : MonoBehaviour
 {
     public TextAsset BehaviorTreeAsset;
-    public Blackboard BlackboardObject;
     public bool RunOnEnable;
 
     private BehaviorTree _myTree;  
@@ -23,7 +22,7 @@ public class BehaviorTreeComponent : MonoBehaviour
             }
             else
             {
-                _myTree.Initialize(gameObject, BlackboardObject);
+                _myTree.Initialize(gameObject);
                 if (RunOnEnable)
                 {
                     Run();

@@ -24,7 +24,7 @@ public enum DecoratorType
 
 public interface INode : IXmlSerializable
 {
-    void Initialize(Blackboard blackboard, GameObject owner, bool created);
+    void Initialize(GameObject owner, bool created);
     void AddChild(INode child);
     INode GetParent();
     void RemoveChild(INode child = null);
@@ -164,7 +164,6 @@ public class Selector : INode
     private BehaviorTree _bt;
     private INode _parent;
     private List<INode> _children = new List<INode>();
-    private Blackboard _blackboard;
     private GameObject _owner;
 
     public List<INode> Children
@@ -173,9 +172,8 @@ public class Selector : INode
         set { _children = value; }
     }
 
-    public void Initialize(Blackboard blackboard, GameObject owner, bool created)
+    public void Initialize(GameObject owner, bool created)
     {
-        _blackboard = blackboard;
         _owner = owner;
         if (_children == null || _children.Count == 0)
         {
@@ -188,7 +186,7 @@ public class Selector : INode
         {
             foreach(INode child in _children)
             {
-                child.Initialize(blackboard, owner, created);
+                child.Initialize(owner, created);
             }
         }
     }
@@ -212,7 +210,7 @@ public class Selector : INode
     public void AddChild(INode child)
     {
         _children.Add(child);
-        child.Initialize(_blackboard, _owner, true);
+        child.Initialize(_owner, true);
     }
 
     public INode GetParent()
@@ -302,7 +300,6 @@ public class Sequence : INode
     private BehaviorTree _bt;
     private INode _parent;
     private List<INode> _children = new List<INode>();
-    private Blackboard _blackboard;
     private GameObject _owner;
 
     public List<INode> Children
@@ -311,9 +308,8 @@ public class Sequence : INode
         set { _children = value; }
     }
 
-    public void Initialize(Blackboard blackboard, GameObject owner, bool created)
+    public void Initialize(GameObject owner, bool created)
     {
-        _blackboard = blackboard;
         _owner = owner;
         if (_children == null || _children.Count == 0)
         {
@@ -326,7 +322,7 @@ public class Sequence : INode
         {
             foreach (INode child in _children)
             {
-                child.Initialize(blackboard, owner, created);
+                child.Initialize(owner, created);
             }
         }
     }
@@ -350,7 +346,7 @@ public class Sequence : INode
     public void AddChild(INode child)
     {
         _children.Add(child);
-        child.Initialize(_blackboard, _owner, true);
+        child.Initialize(_owner, true);
     }
 
     public INode GetParent()
@@ -445,9 +441,8 @@ public class Sequence : INode
 public class Task : INode
 {
     private BehaviorTree _bt;
-    private Blackboard _blackboard;
     private INode _parent;
-    public delegate TaskStatus TickDelegate(GameObject owner, Blackboard blackboard);
+    public delegate TaskStatus TickDelegate(GameObject owner);
     public event TickDelegate OnTaskTick;
 
     private Type _methodType;
@@ -474,9 +469,8 @@ public class Task : INode
         }
     }
     
-    public void Initialize(Blackboard blackboard, GameObject owner, bool created)
+    public void Initialize(GameObject owner, bool created)
     {
-        _blackboard = blackboard;
         _owner = owner;
         SetMethod(_methodType, _methodName);
         if (OnTaskTick == null && !created)
@@ -490,7 +484,7 @@ public class Task : INode
         TaskStatus ts = TaskStatus.FAILURE;
         if (OnTaskTick != null)
         {
-            ts = OnTaskTick(owner, _blackboard);
+            ts = OnTaskTick(owner);
         }
         if (ts == TaskStatus.RUNNING)
         {
@@ -615,7 +609,6 @@ public class Decorator : INode
     private BehaviorTree _bt;
     private INode _parent;
     private INode _child;
-    private Blackboard _blackboard;
     private GameObject _owner;
 
     public INode Child
@@ -630,9 +623,8 @@ public class Decorator : INode
         set;
     }
         
-    public void Initialize(Blackboard blackboard, GameObject owner, bool created)
+    public void Initialize(GameObject owner, bool created)
     {
-        _blackboard = blackboard;
         _owner = owner;
         if (_child == null)
         {
@@ -643,7 +635,7 @@ public class Decorator : INode
         }
         else
         {
-            _child.Initialize(blackboard, owner, created);
+            _child.Initialize(owner, created);
         }
     }
 
@@ -682,7 +674,7 @@ public class Decorator : INode
     public void AddChild(INode child)
     {
         Child = child;
-        child.Initialize(_blackboard, _owner, true);
+        child.Initialize(_owner, true);
     }
 
     public INode GetParent()
@@ -801,12 +793,10 @@ public class BehaviorTree : IXmlSerializable
 
     private float _timer = 0.0f;
     private GameObject _owner;
-    private Blackboard _blackboard;
 
-    public void Initialize(GameObject owner, Blackboard blackboard, bool created = false)
+    public void Initialize(GameObject owner, bool created = false)
     {
         _timer = 0.0f;
-        _blackboard = blackboard;
         _owner = owner;
 
         if (Child == null)
@@ -824,7 +814,7 @@ public class BehaviorTree : IXmlSerializable
             }
             else
             {
-                Child.Initialize(blackboard, owner, created);
+                Child.Initialize(owner, created);
             }
         }
     }
@@ -832,7 +822,7 @@ public class BehaviorTree : IXmlSerializable
     public void AddChild(INode child)
     {
         Child = child;
-        Child.Initialize(_blackboard, _owner, true);
+        Child.Initialize(_owner, true);
         Child.MakeRoot(this);
     }
 

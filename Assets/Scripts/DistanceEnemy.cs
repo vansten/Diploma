@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class DistanceEnemy : Humanoid
 {
+    [SerializeField]
+    private Arrow _arrowPrefab;
+
     private Animator _myAnimator;
     private List<Vector3> _wayToLastPlayerPosition;
     private List<Vector3> _wayToBasePosition;
@@ -27,7 +30,7 @@ public class DistanceEnemy : Humanoid
         _returning = false;
     }
 
-    public TaskStatus Attack(GameObject owner, Blackboard blackboard)
+    public TaskStatus Attack(GameObject owner)
     {
         if(!_playerSeen)
         {
@@ -39,7 +42,7 @@ public class DistanceEnemy : Humanoid
         return TaskStatus.RUNNING;
     }
 
-    public TaskStatus Chase(GameObject owner, Blackboard blackboard)
+    public TaskStatus Chase(GameObject owner)
     {
         if(_playerSeen)
         {
@@ -82,7 +85,7 @@ public class DistanceEnemy : Humanoid
         return TaskStatus.RUNNING;
     }
 
-    public TaskStatus ReturnToBasePosition(GameObject owner, Blackboard blackboard)
+    public TaskStatus ReturnToBasePosition(GameObject owner)
     {
         if(_playerSeen)
         {
@@ -118,7 +121,7 @@ public class DistanceEnemy : Humanoid
         return TaskStatus.RUNNING;
     }
 
-    public TaskStatus Stay(GameObject owner, Blackboard blackboard)
+    public TaskStatus Stay(GameObject owner)
     {
         _myAnimator.SetBool("isWalking", false);
         return TaskStatus.SUCCESS;
@@ -128,6 +131,9 @@ public class DistanceEnemy : Humanoid
     {
         //Shoot at player
         _myAnimator.SetBool("isAttacking", false);
+        Arrow a = Instantiate(_arrowPrefab);
+        a.transform.position = transform.position;
+        a.Direction = WorldManager.Instance.Player.transform.position - transform.position;
     }
 
     void SetPlayerSeenLost(bool seen, bool lost)

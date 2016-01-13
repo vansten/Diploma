@@ -20,7 +20,7 @@ public class Bro : Humanoid
         _hpBar.enabled = false;
     }
 
-    public TaskStatus GrabBook(GameObject owner, Blackboard blackboard)
+    public TaskStatus GrabBook(GameObject owner)
     {
         if(_book == null)
         {
@@ -53,7 +53,7 @@ public class Bro : Humanoid
         return TaskStatus.RUNNING;
     }
 
-    public TaskStatus RunAway(GameObject owner, Blackboard blackboard)
+    public TaskStatus RunAway(GameObject owner)
     {
         if(_wayToExit == null)
         {

@@ -225,9 +225,9 @@ public static class BehaviorTreeEditorHelper
                 if (mi.ReturnType == typeof(TaskStatus))
                 {
                     ParameterInfo[] pis = mi.GetParameters();
-                    if (pis.Length == 2)
+                    if (pis.Length == 1)
                     {
-                        if (pis[0].ParameterType == typeof(GameObject) && pis[1].ParameterType == typeof(Blackboard))
+                        if (pis[0].ParameterType == typeof(GameObject))
                         {
                             string type = t.ToString();
                             string methodName = mi.Name;
