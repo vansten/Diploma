@@ -126,6 +126,7 @@ public class BTWindowsDrawer : IBTElementDrawer
 
     private void DrawNode(int id)
     {
+        //GUI.DragWindow();
         DrawerNodeClass dnc = BehaviorTreeEditorHelper.GetNodeById(_drawingQueue, id);
         if(dnc == null)
         {

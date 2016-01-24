@@ -133,7 +133,7 @@ public class Enemy : Humanoid
         float currentDistance = dir.magnitude;
         if (currentDistance < 0.65f)
         {
-            return TaskStatus.FAILURE;
+            return TaskStatus.SUCCESS;
         }
         dir.Normalize();
         LookAt(_player.transform.position);
